@@ -1,7 +1,21 @@
 #!/usr/bin/env bash
+set -e
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $(basename $0) /path/to/your/video.mp4"
+    exit 1
+fi
 
 VIDEO_FULL_PATH=$1
 VIDEO_NAME=$(basename $VIDEO_FULL_PATH)
+
+check_requirements() {
+    echo "[INFO] Checking requirements"
+    if ! which ffmpeg > /dev/null 2>&1; then
+        echo "[ERROR] Please get 'ffmpeg' installed before proceeding"
+        exit 2
+    fi
+}
 
 get_duration() {
     echo "[INFO] Getting recording duration"
@@ -54,6 +68,7 @@ remove_temporary_screenshots() {
 }
 
 main() {
+    check_requirements
     get_duration
     calculate_frame_intervals
     capture_frames
